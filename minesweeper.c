@@ -249,8 +249,6 @@ int main(void)
             }
             if (event.type == sfEvtMouseButtonPressed && event.mouseButton.button == sfMouseLeft && showed_map[pos_y][pos_x] == 0)
             {
-                show_map(map);
-                printf("\n");
                 if (map[pos_y][pos_x] == 2)
                 {
                     for (int rows = 0; rows < map_size; rows++)
@@ -268,13 +266,11 @@ int main(void)
             }
             if (event.type == sfEvtKeyPressed && event.key.code == sfKeyX && showed_map[pos_y][pos_x] == 0)
             {
-                printf("flagged\n");
                 showed_map[pos_y][pos_x] = 1;
                 remaining_bombs--;
             }
             else if (event.type == sfEvtMouseButtonPressed && event.mouseButton.button == sfMouseRight && showed_map[pos_y][pos_x] == 1)
             {
-                printf("unflagged\n");
                 showed_map[pos_y][pos_x] = 0;
                 remaining_bombs++;
             }
