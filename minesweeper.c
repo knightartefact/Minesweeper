@@ -10,6 +10,30 @@
 #define WIDTH 512
 #define HEIGHT 576
 
+int nb_of_flagged_bombs(int map[16][16], int showed_map[16][16])
+{
+    int flagged_bombs = 0;
+    for (int rows = 0; rows < 16; rows++)
+        for (int cols = 0; cols < 16; cols++)
+        {
+            if (map[rows][cols] == 2 && showed_map[rows][cols] == 1)
+            {
+                flagged_bombs++;
+            }
+        }
+    return (flagged_bombs);
+}
+
+int check_victory(int map[16][16], int showed_map[16][16], int bomb_nb, int remaining_bombs)
+{
+    int flagged_bombs = nb_of_flagged_bombs(map, showed_map);
+    
+    if (remaining_bombs == 0 && flagged_bombs == bomb_nb)
+        return (1);
+    else
+        return 0;
+}
+
 void flood_fill(int map[16][16], int showed_map[16][16], int pos_x, int pos_y)
 {
     if (map[pos_y][pos_x] > 3)
@@ -88,6 +112,8 @@ int main(void)
     int bomb_nb = 0;
     int map[16][16];
     int showed_map[16][16];
+    int remaining_bombs;
+    int counter = 0;
 
     sprite = sfSprite_create();
     tile = sfTexture_createFromFile("minesweeper_tiles.png", NULL);
@@ -98,7 +124,7 @@ int main(void)
     {
         for (int cols = 0; cols < 16; cols++)
         {
-            if (rand() % 7 == 0)
+            if (rand() % 8 == 0)
             {
                 map[rows][cols] = 2;
                 bomb_nb++;
@@ -109,8 +135,9 @@ int main(void)
             }
         }
     }
+    remaining_bombs = bomb_nb;
+    printf("nb of bombs : %d\n", bomb_nb);
 
-    int counter = 0;
     for (int rows = 0; rows < 16; rows++)
     {
         for (int cols = 0; cols < 16; cols++)
@@ -150,7 +177,6 @@ int main(void)
                 {
                     counter++;
                 }
-                printf("counter = %d\n", counter);
                 map[rows][cols] = counter + 3;
                 counter = 0;
             }
@@ -218,16 +244,21 @@ int main(void)
             {
                 printf("flagged\n");
                 showed_map[pos_y][pos_x] = 1;
-                bomb_nb--;
+                remaining_bombs--;
+                printf("nb of bombs : %d\n", remaining_bombs);
             }
             else if (event.type == sfEvtMouseButtonPressed && event.mouseButton.button == sfMouseRight && showed_map[pos_y][pos_x] == 1)
             {
                 printf("unflagged\n");
                 showed_map[pos_y][pos_x] = 0;
-                bomb_nb++;
+                remaining_bombs++;
+                printf("nb of bombs : %d\n", remaining_bombs);
             }
         }
-        sfRenderWindow_clear(window_render, sfBlack);
+        if (check_victory(map, showed_map, bomb_nb, remaining_bombs) == 1)
+            return(0);
+
+            sfRenderWindow_clear(window_render, sfBlack);
 
         for (int rows = 0; rows < 16; rows++)
         {
@@ -244,7 +275,6 @@ int main(void)
                 sfRenderWindow_drawSprite(window_render, sprite, NULL);
             }
         }
-        printf("nb of bombs : %d\n", bomb_nb);
         sfRenderWindow_display(window_render);
     }
     return (0);
