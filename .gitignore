@@ -1,0 +1,10 @@
+*
+!*.png
+!*.jpg
+!assets/
+!License
+!Makefile
+!*.c
+*~
+'#'*
+*.o
