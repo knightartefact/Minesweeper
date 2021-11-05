@@ -214,7 +214,7 @@ int main(void)
     int remaining_bombs = bomb_nb;
 
     sprite = sfSprite_create();
-    tile = sfTexture_createFromFile("minesweeper_tiles.png", NULL);
+    tile = sfTexture_createFromFile("assets/minesweeper_tiles.png", NULL);
     window_render = sfRenderWindow_create(video_mode, "Minesweeper !", sfClose, NULL);
 
     sfSprite_setTexture(sprite, tile, sfFalse);
