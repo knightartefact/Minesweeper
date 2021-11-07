@@ -16,7 +16,7 @@ NAME	=	minesweeper
 all: $(NAME)
 
 $(NAME):
-	gcc -o $(NAME) $(SRC) $(CSFML_LIB)
+	gcc -g -o $(NAME) $(SRC) $(CSFML_LIB)
 
 clean:
 	rm -f vgcore.* *~ '#'*

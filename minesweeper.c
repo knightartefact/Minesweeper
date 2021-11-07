@@ -5,65 +5,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include "timer.h"
 
 #define TILE_SIZE 32
 #define SMILEY_SIZE 64
+#define TIMER_WIDTH 32
+#define TIMER_HEIGHT 64
 
-const int grid_size = 20;
+const int grid_size = 8;
 const int width = TILE_SIZE * grid_size;
 const int height = TILE_SIZE * grid_size + TILE_SIZE * 2;
 int map_size = width / TILE_SIZE;
-int difficulty = 7;
-
-void check_neighbors(int map[map_size][map_size])
-{
-    int counter = 0;
-
-    for (int rows = 0; rows < map_size; rows++)
-    {
-        for (int cols = 0; cols < map_size; cols++)
-        {
-            if (map[rows][cols] != 12)
-            {
-
-                if (map[rows][cols + 1] == 12 && cols != (map_size - 1))
-                {
-                    counter++;
-                }
-                if (map[rows][cols - 1] == 12 && cols != 0)
-                {
-                    counter++;
-                }
-                if (map[rows + 1][cols] == 12 && rows != (map_size - 1))
-                {
-                    counter++;
-                }
-                if (map[rows - 1][cols] == 12 && rows != 0)
-                {
-                    counter++;
-                }
-                if (map[rows + 1][cols + 1] == 12 && rows != (map_size - 1) && cols != (map_size - 1))
-                {
-                    counter++;
-                }
-                if (map[rows - 1][cols - 1] == 12 && rows != 0 && cols != 0)
-                {
-                    counter++;
-                }
-                if (map[rows + 1][cols - 1] == 12 && rows != (map_size - 1) && cols != 0)
-                {
-                    counter++;
-                }
-                if (map[rows - 1][cols + 1] == 12 && rows != 0 && cols != (map_size - 1))
-                {
-                    counter++;
-                }
-                map[rows][cols] = counter;
-                counter = 0;
-            }
-        }
-    }
-}
+int difficulty = 40;
 
 void show_map(int map[map_size][map_size])
 {
@@ -110,6 +63,56 @@ int generate_grid(int map[map_size][map_size])
     return (bomb_nb);
 }
 
+void check_neighbors(int map[map_size][map_size])
+{
+    int counter = 0;
+
+    for (int rows = 0; rows < map_size; rows++)
+    {
+        for (int cols = 0; cols < map_size; cols++)
+        {
+            if (map[rows][cols] != 12)
+            {
+
+                if (cols != (map_size - 1) && map[rows][cols + 1] == 12)
+                {
+                    counter++;
+                }
+                if (cols != 0 && map[rows][cols - 1] == 12)
+                {
+                    counter++;
+                }
+                if (rows != (map_size - 1) && map[rows + 1][cols] == 12)
+                {
+                    counter++;
+                }
+                if (rows != 0 && map[rows - 1][cols] == 12)
+                {
+                    counter++;
+                }
+                if (rows != (map_size - 1) && cols != (map_size - 1) && map[rows + 1][cols + 1] == 12)
+                {
+                    counter++;
+                }
+                if (rows != 0 && cols != 0 && map[rows - 1][cols - 1] == 12)
+                {
+                    counter++;
+                }
+                if (rows != (map_size - 1) && cols != 0 && map[rows + 1][cols - 1] == 12)
+                {
+                    counter++;
+                }
+                if (rows != 0 && cols != (map_size - 1) && map[rows - 1][cols + 1] == 12)
+                {
+                    counter++;
+                }
+                map[rows][cols] = counter;
+                counter = 0;
+            }
+        }
+    }
+}
+
 int nb_of_flagged_bombs(int map[map_size][map_size], int showed_map[map_size][map_size])
 {
     int flagged_bombs = 0;
@@ -144,42 +147,42 @@ void flood_fill(int map[map_size][map_size], int showed_map[map_size][map_size],
     else
     {
         map[pos_y][pos_x] = 64;
-        if (map[pos_y][pos_x + 1] <= 8 && pos_x != (map_size - 1) && showed_map[pos_y][pos_x + 1] != 10)
+        if (pos_x != (map_size - 1) && showed_map[pos_y][pos_x + 1] != 10 && map[pos_y][pos_x + 1] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x + 1, pos_y);
         }
-        if (map[pos_y][pos_x - 1] <= 8 && pos_x != 0 && showed_map[pos_y][pos_x - 1] != 10)
+        if (pos_x != 0 && showed_map[pos_y][pos_x - 1] != 10 && map[pos_y][pos_x - 1] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x - 1, pos_y);
         }
-        if (map[pos_y + 1][pos_x] <= 8 && pos_y != (map_size - 1) && showed_map[pos_y + 1][pos_x] != 10)
+        if (pos_y != (map_size - 1) && showed_map[pos_y + 1][pos_x] != 10 && map[pos_y + 1][pos_x] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x, pos_y + 1);
         }
-        if (map[pos_y - 1][pos_x] <= 8 && pos_y != 0 && showed_map[pos_y - 1][pos_x] != 10)
+        if (pos_y != 0 && showed_map[pos_y - 1][pos_x] != 10 && map[pos_y - 1][pos_x] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x, pos_y - 1);
         }
-        if (map[pos_y + 1][pos_x + 1] <= 8 && pos_y != (map_size - 1) && pos_x != (map_size - 1) && showed_map[pos_y + 1][pos_x + 1] != 10)
+        if (pos_y != (map_size - 1) && pos_x != (map_size - 1) && showed_map[pos_y + 1][pos_x + 1] != 10 && map[pos_y + 1][pos_x + 1] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x + 1, pos_y + 1);
         }
-        if (map[pos_y + 1][pos_x - 1] <= 8 && pos_y != (map_size - 1) && pos_x != 0 && showed_map[pos_y + 1][pos_x - 1] != 10)
+        if (pos_y != (map_size - 1) && pos_x != 0 && showed_map[pos_y + 1][pos_x - 1] != 10 && map[pos_y + 1][pos_x - 1] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x - 1, pos_y + 1);
         }
-        if (map[pos_y - 1][pos_x + 1] <= 8 && pos_y != 0 && pos_x != (map_size - 1) && showed_map[pos_y - 1][pos_x + 1] != 10)
+        if (pos_x != (map_size - 1) && showed_map[pos_y - 1][pos_x + 1] != 10 && map[pos_y - 1][pos_x + 1] <= 8 && pos_y != 0)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x + 1, pos_y - 1);
         }
-        if (map[pos_y - 1][pos_x - 1] <= 8 && pos_y != 0 && pos_x != 0 && showed_map[pos_y - 1][pos_x - 1] != 10)
+        if (pos_y != 0 && pos_x != 0 && showed_map[pos_y - 1][pos_x - 1] != 10 && map[pos_y - 1][pos_x - 1] <= 8)
         {
             showed_map[pos_y][pos_x] = map[pos_y][pos_x];
             flood_fill(map, showed_map, pos_x - 1, pos_y - 1);
@@ -245,6 +248,65 @@ void end_screen(int victory, int map[map_size][map_size], int showed_map[map_siz
 {
 }
 
+int *time_to_timer(int *timer_array, int elapsed_time)
+{
+    timer_array[2] = elapsed_time % 10;
+    timer_array[1] = elapsed_time / 10 % 10;
+    timer_array[0] = elapsed_time / 100 % 10;
+}
+
+//USE A STRUCTURE TO INIT TIMER THEN MODIFY THE VALUES OF IT IN DISPLAY TIMER
+
+timer init_timer(timer timer)
+{
+    timer.clock = sfClock_create();
+    timer.timer_sprite = sfSprite_create();
+    timer.digits = malloc(sizeof(int) * 10);
+    timer.digits[0] = 0;
+    timer.digits[1] = 0;
+    timer.digits[2] = 0;
+    timer.timer_sprite_rect.left = 0;
+    timer.timer_sprite_rect.top = 0;
+    timer.timer_sprite_rect.height = TIMER_HEIGHT;
+    timer.timer_sprite_rect.width = TIMER_WIDTH;
+    timer.timer_sprite_pos.x = 0;
+    timer.timer_sprite_pos.y = 0;
+    timer.timer_texture = sfTexture_createFromFile("assets/minesweeper_full_tileset.png", NULL);
+    sfSprite_setTexture(timer.timer_sprite, timer.timer_texture, sfFalse);
+
+    return (timer);
+}
+
+void display_timer(sfRenderWindow *window_render, timer timer)
+{
+    int elapsed_time_seconds;
+
+    timer.time = sfClock_getElapsedTime(timer.clock);
+    elapsed_time_seconds = timer.time.microseconds / 1000000;
+    timer.digits = time_to_timer(timer.digits, elapsed_time_seconds);
+    timer.timer_sprite_rect.height = TIMER_HEIGHT;
+    timer.timer_sprite_rect.width = TIMER_WIDTH;
+    timer.timer_sprite_pos.y = 0;
+
+    for (int i = 0; i < 3; i++)
+    {
+        timer.timer_sprite_pos.x = TIMER_WIDTH * i + (TILE_SIZE * map_size - TIMER_WIDTH * 3);
+        if (timer.digits[i] <= 2)
+        {
+            timer.timer_sprite_rect.left = 160 + (TIMER_WIDTH * timer.digits[i]);
+            timer.timer_sprite_rect.top = TIMER_HEIGHT * 2;
+        }
+        else
+        {
+            timer.timer_sprite_rect.left = TIMER_WIDTH * (timer.digits[i]) - TIMER_WIDTH * 3;
+            timer.timer_sprite_rect.top = TIMER_HEIGHT * 3;
+        }
+        sfSprite_setTextureRect(timer.timer_sprite, timer.timer_sprite_rect);
+        sfSprite_setPosition(timer.timer_sprite, timer.timer_sprite_pos);
+        sfRenderWindow_drawSprite(window_render, timer.timer_sprite, NULL);
+    }
+}
+
 int main(void)
 {
     srand(time(0));
@@ -260,8 +322,7 @@ int main(void)
     sfVector2f smiley_sprite_pos;
     sfIntRect smiley_sprite_rect;
     sfVector2i mouse_pos;
-    sfClock *clock;
-    sfTime time;
+    timer timer;
 
     int map[map_size][map_size];
     int showed_map[map_size][map_size];
@@ -269,7 +330,6 @@ int main(void)
     int remaining_bombs = bomb_nb;
     int smiley_state = 0;
 
-    clock = sfClock_create();
     tiles_sprite = sfSprite_create();
     tile = sfTexture_createFromFile("assets/minesweeper_full_tileset.png", NULL);
     smiley_sprite = sfSprite_create();
@@ -280,16 +340,16 @@ int main(void)
 
     window_render = sfRenderWindow_create(video_mode, "Minesweeper !", sfClose, NULL);
 
-    check_neighbors(map);
     initialize_player_view(showed_map);
     show_map(map);
+    check_neighbors(map);
+    timer = init_timer(timer);
 
     while (sfRenderWindow_isOpen(window_render))
     {
         mouse_pos = sfMouse_getPositionRenderWindow(window_render);
         int pos_x = mouse_pos.x / TILE_SIZE;
         int pos_y = mouse_pos.y / TILE_SIZE - 2;
-        time = sfClock_getElapsedTime(clock);
 
         while (sfRenderWindow_pollEvent(window_render, &event))
         {
@@ -326,6 +386,7 @@ int main(void)
             }
             if (check_victory(map, showed_map, bomb_nb, remaining_bombs) && event.type == sfEvtKeyPressed && event.key.code == sfKeyT)
             {
+                sfRenderWindow_destroy(window_render);
                 main();
                 exit(0);
             }
@@ -362,6 +423,8 @@ int main(void)
         sfSprite_setTextureRect(smiley_sprite, smiley_sprite_rect);
         sfSprite_setPosition(smiley_sprite, smiley_sprite_pos);
         sfRenderWindow_drawSprite(window_render, smiley_sprite, NULL);
+
+        display_timer(window_render, timer);
 
         sfRenderWindow_display(window_render);
     }
