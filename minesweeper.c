@@ -12,11 +12,11 @@
 #define TIMER_WIDTH 32
 #define TIMER_HEIGHT 64
 
-const int grid_size = 8;
+const int grid_size = 16;
 const int width = TILE_SIZE * grid_size;
 const int height = TILE_SIZE * grid_size + TILE_SIZE * 2;
 int map_size = width / TILE_SIZE;
-int difficulty = 40;
+int difficulty = 8;
 
 void show_map(int map[map_size][map_size])
 {

@@ -4,6 +4,9 @@
 ## File description:
 ## makefile
 ##
+CCFLGSLIN	=	gcc -g
+
+CCFLGSWIN	=	x86_64-w64-mingw32-gcc --static
 
 SRC		=	minesweeper.c
 
@@ -16,7 +19,7 @@ NAME	=	minesweeper
 all: $(NAME)
 
 $(NAME):
-	gcc -g -o $(NAME) $(SRC) $(CSFML_LIB)
+	$(CCFLGSWIN) -o $(NAME) $(SRC) $(CSFML_LIB) -I.
 
 clean:
 	rm -f vgcore.* *~ '#'*

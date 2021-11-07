@@ -5,6 +5,7 @@
 !License
 !Makefile
 !*.c
+!*.h
 *~
 '#'*
 *.o
