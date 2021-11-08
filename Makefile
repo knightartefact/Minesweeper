@@ -19,7 +19,7 @@ NAME	=	minesweeper
 all: $(NAME)
 
 $(NAME):
-	$(CCFLGSWIN) -o $(NAME) $(SRC) $(CSFML_LIB) -I.
+	$(CCFLGSLIN) -o $(NAME) $(SRC) $(CSFML_LIB) -I.
 
 clean:
 	rm -f vgcore.* *~ '#'*

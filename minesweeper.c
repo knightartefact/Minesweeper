@@ -307,6 +307,16 @@ void display_timer(sfRenderWindow *window_render, timer timer)
     }
 }
 
+timer stop_clock(timer timer)
+{
+    sfClock_destroy(timer.clock);
+    timer.digits[0] = 7;
+    timer.digits[1] = 7;
+    timer.digits[2] = 7;
+
+    return (timer);
+}
+
 int main(void)
 {
     srand(time(0));
@@ -324,6 +334,7 @@ int main(void)
     sfVector2i mouse_pos;
     timer timer;
 
+    int game_state = 0;
     int map[map_size][map_size];
     int showed_map[map_size][map_size];
     int bomb_nb = generate_grid(map);
@@ -341,7 +352,6 @@ int main(void)
     window_render = sfRenderWindow_create(video_mode, "Minesweeper !", sfClose, NULL);
 
     initialize_player_view(showed_map);
-    show_map(map);
     check_neighbors(map);
     timer = init_timer(timer);
 
@@ -361,7 +371,7 @@ int main(void)
             {
                 switch_maps(map, showed_map);
             }
-            if (sfMouse_isButtonPressed && event.mouseButton.button == sfMouseLeft)
+            if (sfMouse_isButtonPressed && event.mouseButton.button == sfMouseLeft && game_state == 0)
             {
                 if (showed_map[pos_y][pos_x] == 9)
                     smiley_state = 2;
@@ -371,30 +381,37 @@ int main(void)
                     if (reveal_tiles(map, showed_map, pos_x, pos_y) == 1)
                     {
                         smiley_state = 3;
+                        game_state = 1;
                     }
                 }
             }
-            if (event.type == sfEvtKeyPressed && event.key.code == sfKeyX && showed_map[pos_y][pos_x] == 9)
-            {
-                showed_map[pos_y][pos_x] = 10;
-                remaining_bombs--;
-            }
-            else if (event.type == sfEvtMouseButtonPressed && event.mouseButton.button == sfMouseRight && showed_map[pos_y][pos_x] == 10)
-            {
-                showed_map[pos_y][pos_x] = 9;
-                remaining_bombs++;
-            }
-            if (check_victory(map, showed_map, bomb_nb, remaining_bombs) && event.type == sfEvtKeyPressed && event.key.code == sfKeyT)
+            if (event.type == sfEvtKeyPressed && event.key.code == sfKeyT && game_state == 1)
             {
                 sfRenderWindow_destroy(window_render);
                 main();
                 exit(0);
             }
-        }
-
-        if (check_victory(map, showed_map, bomb_nb, remaining_bombs))
-        {
-            smiley_state = 4;
+            if (event.type == sfEvtKeyPressed && event.key.code == sfKeyX && showed_map[pos_y][pos_x] == 9 && game_state == 0)
+            {
+                showed_map[pos_y][pos_x] = 10;
+                remaining_bombs--;
+            }
+            else if (event.type == sfEvtMouseButtonPressed && event.mouseButton.button == sfMouseRight && showed_map[pos_y][pos_x] == 10 && game_state == 0)
+            {
+                showed_map[pos_y][pos_x] = 9;
+                remaining_bombs++;
+            }
+            if (check_victory(map, showed_map, bomb_nb, remaining_bombs))
+            {
+                smiley_state = 4;
+                game_state = 2;
+                if (event.type == sfEvtKeyPressed && event.key.code == sfKeyT)
+                {
+                    sfRenderWindow_destroy(window_render);
+                    main();
+                    exit(0);
+                }
+            }
         }
 
         sfRenderWindow_clear(window_render, sfBlack);
@@ -423,9 +440,7 @@ int main(void)
         sfSprite_setTextureRect(smiley_sprite, smiley_sprite_rect);
         sfSprite_setPosition(smiley_sprite, smiley_sprite_pos);
         sfRenderWindow_drawSprite(window_render, smiley_sprite, NULL);
-
         display_timer(window_render, timer);
-
         sfRenderWindow_display(window_render);
     }
     return (0);
