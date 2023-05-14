@@ -26,3 +26,8 @@ After cloning the repo enter the following commands:
 $ make
 $ ./minesweeper
 ```
+
+## Screenshots
+
+![Screenshot of a game of Minesweeper](assets/mine_screenshot.png)
+![Screenshot of a game of the lose screen](assets/mine_loose_screenshot.png)
