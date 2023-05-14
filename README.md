@@ -13,7 +13,7 @@ You just have to flag every mine without making them explode!
 * Clear a cell (or more!) -- **Left mouse button**
 * Restart the game -- **T**
 * Close the game -- **Escape**
-* Reveal the mines (This is kinda cheating!) -- **X**
+* Reveal the mines (This is kinda cheating!) -- **C**
 
 ## Compilation
 
