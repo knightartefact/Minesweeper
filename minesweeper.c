@@ -19,7 +19,7 @@
 #define TIMER_WIDTH 32
 #define TIMER_HEIGHT 64
 
-const int grid_size = 40;
+const int grid_size = 20;
 const int width = TILE_SIZE * grid_size;
 const int height = TILE_SIZE * grid_size + TILE_SIZE * 2;
 int map_size = width / TILE_SIZE;
@@ -398,7 +398,7 @@ int main(void)
                 main();
                 exit(0);
             }
-            if (event.type == sfEvtKeyPressed && event.key.code == sfKeyX && showed_map[pos_y][pos_x] == 9 && game_state == 0)
+            if (event.type == sfEvtMouseButtonPressed && event.mouseButton.button == sfMouseRight && showed_map[pos_y][pos_x] == 9 && game_state == 0)
             {
                 showed_map[pos_y][pos_x] = 10;
                 remaining_bombs--;
